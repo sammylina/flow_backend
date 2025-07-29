@@ -12,7 +12,7 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, language } = req.body;
 
     // Validate input
     if (!email || !password) {
@@ -20,7 +20,7 @@ export const register = async (
     }
 
     // Register user
-    const user = await registerUser(email, password, name);
+    const user = await registerUser(email, password, language);
     
     logger.info(`User registered with email: ${email}`);
     

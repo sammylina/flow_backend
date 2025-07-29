@@ -37,7 +37,7 @@ describe('Auth Middleware', () => {
 
     // Mock jwt.verify to return decoded token
     (jwt.verify as jest.Mock).mockReturnValue({
-      id: 'user-id',
+      id: 1,
       email: 'test@example.com',
     });
 
@@ -45,7 +45,7 @@ describe('Auth Middleware', () => {
 
     expect(jwt.verify).toHaveBeenCalledWith('valid-token', config.jwtSecret);
     expect(req.user).toEqual({
-      id: 'user-id',
+      id: 1,
       email: 'test@example.com',
     });
     expect(next).toHaveBeenCalled();
