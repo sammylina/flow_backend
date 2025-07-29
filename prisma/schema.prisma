@@ -25,16 +25,6 @@ model User {
   @@map("users")
 }
 
-model Task {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  @@map("tasks")
-}
 
 model LessonProgress {
   id        Int      @id @default(autoincrement())
