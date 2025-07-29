@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import taskRoutes from './task.routes';
+import { authRoutes, taskRoutes } from '../modules';
 
 const router = Router();
 
@@ -12,6 +12,7 @@ router.get('/health', (req, res) => {
 });
 
 // API routes
+router.use('/auth', authRoutes);
 router.use('/tasks', taskRoutes);
 
 export default router;
