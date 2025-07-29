@@ -24,20 +24,20 @@ const prisma = new PrismaClient({
 });
 
 // Add logging to Prisma Client
-prisma.$on('query', (e) => {
+prisma.$on('query', (e: { query: string; duration: number }) => {
   logger.debug(`Query: ${e.query}`);
   logger.debug(`Duration: ${e.duration}ms`);
 });
 
-prisma.$on('error', (e) => {
+prisma.$on('error', (e: { message: string }) => {
   logger.error(`Prisma Error: ${e.message}`);
 });
 
-prisma.$on('info', (e) => {
+prisma.$on('info', (e: { message: string }) => {
   logger.info(`Prisma Info: ${e.message}`);
 });
 
-prisma.$on('warn', (e) => {
+prisma.$on('warn', (e: { message: string }) => {
   logger.warn(`Prisma Warning: ${e.message}`);
 });
 
@@ -47,7 +47,7 @@ prisma
   .then(() => {
     logger.info('Successfully connected to the database');
   })
-  .catch((error) => {
+  .catch((error: Error) => {
     logger.error(`Failed to connect to the database: ${error.message}`);
     process.exit(1);
   });
