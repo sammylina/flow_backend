@@ -7,7 +7,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
-  databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/flow_db?schema=public',
+  databaseUrl:
+    process.env.DATABASE_URL ||
+    'postgresql://postgres:postgres@localhost:5432/flow_db?schema=public',
   logLevel: process.env.LOG_LEVEL || 'info',
   jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',

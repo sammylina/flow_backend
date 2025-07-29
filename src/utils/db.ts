@@ -42,7 +42,8 @@ prisma.$on('warn', (e) => {
 });
 
 // Handle connection errors
-prisma.$connect()
+prisma
+  .$connect()
   .then(() => {
     logger.info('Successfully connected to the database');
   })
