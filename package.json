@@ -1,0 +1,57 @@
+{
+  "name": "flow_backend",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sammylina/flow_backend.git"
+  },
+  "keywords": [
+    "express",
+    "typescript",
+    "prisma",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sammylina/flow_backend/issues"
+  },
+  "homepage": "https://github.com/sammylina/flow_backend#readme",
+  "description": "A Node.js backend application using TypeScript, Express framework, and Prisma ORM with logging functionality.",
+  "dependencies": {
+    "@prisma/client": "^6.13.0",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "prisma": "^6.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/helmet": "^0.0.48",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.0",
+    "ts-node-dev": "^2.0.0"
+  }
+}
