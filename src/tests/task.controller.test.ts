@@ -79,10 +79,12 @@ describe('Task Controller', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
-      expect(response.body.data.task).toEqual(expect.objectContaining({
-        id: '1',
-        title: 'Test Task',
-      }));
+      expect(response.body.data.task).toEqual(
+        expect.objectContaining({
+          id: '1',
+          title: 'Test Task',
+        })
+      );
       expect(prisma.task.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
@@ -118,26 +120,24 @@ describe('Task Controller', () => {
 
       (prisma.task.create as jest.Mock).mockResolvedValue(mockCreatedTask);
 
-      const response = await request(app)
-        .post('/api/tasks')
-        .send(taskData);
+      const response = await request(app).post('/api/tasks').send(taskData);
 
       expect(response.status).toBe(201);
       expect(response.body.status).toBe('success');
-      expect(response.body.data.task).toEqual(expect.objectContaining({
-        id: '3',
-        title: 'New Task',
-        description: 'New Description',
-      }));
+      expect(response.body.data.task).toEqual(
+        expect.objectContaining({
+          id: '3',
+          title: 'New Task',
+          description: 'New Description',
+        })
+      );
       expect(prisma.task.create).toHaveBeenCalledWith({
         data: taskData,
       });
     });
 
     it('should return 400 if title is missing', async () => {
-      const response = await request(app)
-        .post('/api/tasks')
-        .send({ description: 'Missing Title' });
+      const response = await request(app).post('/api/tasks').send({ description: 'Missing Title' });
 
       expect(response.status).toBe(400);
       expect(response.body.status).toBe('error');

@@ -12,12 +12,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  passwordHash    String
+  language        String    // e.g., "fr", "es", "en"
+  coins           Int       @default(0)
+  isPaid          Boolean   @default(false)
+  progress        LessonProgress[]
+  purchases       Purchase[]
+  coinTransactions CoinTransaction[]
 
   @@map("users")
 }
@@ -31,4 +34,48 @@ model Task {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("tasks")
+}
+
+model LessonProgress {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  String
+  completed Boolean  @default(false)
+  score     Int?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  itemType  String   // e.g., "premium", "coins", "course"
+  itemId    String?
+  amount    Decimal
+  currency  String   @default("USD")
+  status    String   @default("pending") // pending, completed, failed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("purchases")
+}
+
+model CoinTransaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  amount      Int      // positive for earning, negative for spending
+  type        String   // e.g., "earned", "spent", "purchased", "bonus"
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("coin_transactions")
 }

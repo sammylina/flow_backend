@@ -39,12 +39,12 @@ describe('Auth Controller', () => {
       
       // Mock Prisma create to return a new user
       (prisma.user.create as jest.Mock).mockResolvedValue({
-        id: 'user-id',
+        id: 1,
         email: 'test@example.com',
-        name: 'Test User',
-        password: 'hashedPassword',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        passwordHash: 'hashedPassword',
+        language: 'en',
+        coins: 0,
+        isPaid: false,
       });
 
       const response = await request(app)
@@ -52,14 +52,14 @@ describe('Auth Controller', () => {
         .send({
           email: 'test@example.com',
           password: 'password123',
-          name: 'Test User',
+          language: 'en',
         });
 
       expect(response.status).toBe(201);
       expect(response.body.status).toBe('success');
       expect(response.body.data.user).toHaveProperty('id');
       expect(response.body.data.user).toHaveProperty('email', 'test@example.com');
-      expect(response.body.data.user).not.toHaveProperty('password');
+      expect(response.body.data.user).not.toHaveProperty('passwordHash');
       
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
@@ -70,7 +70,7 @@ describe('Auth Controller', () => {
       expect(prisma.user.create).toHaveBeenCalledWith(expect.objectContaining({
         data: expect.objectContaining({
           email: 'test@example.com',
-          name: 'Test User',
+          language: 'en',
         }),
       }));
     });
@@ -78,12 +78,12 @@ describe('Auth Controller', () => {
     it('should return 400 if user already exists', async () => {
       // Mock Prisma findUnique to return a user (user exists)
       (prisma.user.findUnique as jest.Mock).mockResolvedValue({
-        id: 'user-id',
+        id: 1,
         email: 'test@example.com',
-        name: 'Test User',
-        password: 'hashedPassword',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        passwordHash: 'hashedPassword',
+        language: 'en',
+        coins: 0,
+        isPaid: false,
       });
 
       const response = await request(app)
@@ -91,7 +91,7 @@ describe('Auth Controller', () => {
         .send({
           email: 'test@example.com',
           password: 'password123',
-          name: 'Test User',
+          language: 'en',
         });
 
       expect(response.status).toBe(400);
@@ -139,12 +139,12 @@ describe('Auth Controller', () => {
     it('should return 401 if password is invalid', async () => {
       // Mock Prisma findUnique to return a user
       (prisma.user.findUnique as jest.Mock).mockResolvedValue({
-        id: 'user-id',
+        id: 1,
         email: 'test@example.com',
-        name: 'Test User',
-        password: 'hashedPassword',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        passwordHash: 'hashedPassword',
+        language: 'en',
+        coins: 0,
+        isPaid: false,
       });
       
       // Mock bcrypt compare to return false (password is invalid)

@@ -6,12 +6,12 @@ import config from '../../../config';
 
 // Define User type
 type User = {
-  id: string;
+  id: number;
   email: string;
-  name: string | null;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
+  passwordHash: string;
+  language: string;
+  coins: number;
+  isPaid: boolean;
 };
 
 /**
@@ -20,8 +20,8 @@ type User = {
 export const registerUser = async (
   email: string,
   password: string,
-  name?: string
-): Promise<Omit<User, 'password'>> => {
+  language: string = 'en'
+): Promise<Omit<User, 'passwordHash'>> => {
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -39,13 +39,13 @@ export const registerUser = async (
   const user = await prisma.user.create({
     data: {
       email,
-      password: hashedPassword,
-      name,
+      passwordHash: hashedPassword,
+      language,
     },
   });
 
   // Return user without password
-  const { password: _, ...userWithoutPassword } = user;
+  const { passwordHash: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };
 
@@ -55,7 +55,7 @@ export const registerUser = async (
 export const loginUser = async (
   email: string,
   password: string
-): Promise<{ user: Omit<User, 'password'>; token: string }> => {
+): Promise<{ user: Omit<User, 'passwordHash'>; token: string }> => {
   // Find user by email
   const user = await prisma.user.findUnique({
     where: { email },
@@ -66,7 +66,7 @@ export const loginUser = async (
   }
 
   // Check password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
     throw new ApiError(401, 'Invalid credentials');
@@ -79,7 +79,7 @@ export const loginUser = async (
   );
 
   // Return user without password and token
-  const { password: _, ...userWithoutPassword } = user;
+  const { passwordHash: _, ...userWithoutPassword } = user;
   return { user: userWithoutPassword, token };
 };
 
@@ -87,8 +87,8 @@ export const loginUser = async (
  * Get user by ID
  */
 export const getUserById = async (
-  id: string
-): Promise<Omit<User, 'password'>> => {
+  id: number
+): Promise<Omit<User, 'passwordHash'>> => {
   const user = await prisma.user.findUnique({
     where: { id },
   });
@@ -98,6 +98,6 @@ export const getUserById = async (
   }
 
   // Return user without password
-  const { password: _, ...userWithoutPassword } = user;
+  const { passwordHash: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };

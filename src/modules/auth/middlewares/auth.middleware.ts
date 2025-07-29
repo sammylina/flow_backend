@@ -9,7 +9,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: {
-        id: string;
+        id: number;
         email: string;
       };
     }
@@ -41,7 +41,7 @@ export const authenticate = async (
     // Verify token
     try {
       const decoded = jwt.verify(token, config.jwtSecret) as {
-        id: string;
+        id: number;
         email: string;
       };
       
