@@ -2,6 +2,8 @@
 
 A Node.js backend application using TypeScript, Express framework, and Prisma ORM with logging functionality.
 
+> **Note**: This repository has been restructured with a clean main branch setup for optimal development workflow.
+
 ## Features
 
 - TypeScript for type safety
