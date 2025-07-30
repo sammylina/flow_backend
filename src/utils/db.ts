@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma';
 import logger from './logger';
 
 // Create a singleton instance of PrismaClient
@@ -41,16 +41,19 @@ prisma.$on('warn', (e: { message: string }) => {
   logger.warn(`Prisma Warning: ${e.message}`);
 });
 
-// Handle connection errors
-prisma
-  .$connect()
-  .then(() => {
-    logger.info('Successfully connected to the database');
-  })
-  .catch((error: Error) => {
-    logger.error(`Failed to connect to the database: ${error.message}`);
-    process.exit(1);
-  });
+// Initialize connection only when not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  // Handle connection errors
+  prisma
+    .$connect()
+    .then(() => {
+      logger.info('Successfully connected to the database');
+    })
+    .catch((error: Error) => {
+      logger.error(`Failed to connect to the database: ${error.message}`);
+      process.exit(1);
+    });
+}
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
