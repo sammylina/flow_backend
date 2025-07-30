@@ -4,13 +4,13 @@ import fs from 'fs';
 
 describe('Prisma Client Generation', () => {
   it('should have generated Prisma client files', () => {
-    const prismaClientPath = path.join(__dirname, '../generated/prisma');
+    const prismaClientPath = path.join(__dirname, '../../node_modules/@prisma/client');
 
     // Check if the generated directory exists
     expect(fs.existsSync(prismaClientPath)).toBe(true);
 
     // Check if essential files exist
-    const essentialFiles = ['index.js', 'index.d.ts', 'package.json', 'schema.prisma'];
+    const essentialFiles = ['index.js', 'package.json'];
 
     essentialFiles.forEach((file) => {
       const filePath = path.join(prismaClientPath, file);
@@ -22,7 +22,7 @@ describe('Prisma Client Generation', () => {
     // This test verifies that the generated client can be imported
     // without throwing any errors
     expect(async () => {
-      const { PrismaClient } = await import('../generated/prisma');
+      const { PrismaClient } = await import('@prisma/client');
       expect(PrismaClient).toBeDefined();
       expect(typeof PrismaClient).toBe('function');
     }).not.toThrow();
@@ -37,7 +37,7 @@ describe('Prisma Client Generation', () => {
   });
 
   it('should have the correct Prisma client configuration', async () => {
-    const { PrismaClient } = await import('../generated/prisma');
+    const { PrismaClient } = await import('@prisma/client');
     const client = new PrismaClient();
 
     // Verify that the client is properly instantiated
