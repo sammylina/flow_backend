@@ -49,5 +49,3 @@ prisma.$on('info', (e: { message: string }) => {
 prisma.$on('warn', (e: { message: string }) => {
   logger.warn(`Prisma Warning: ${e.message}`);
 });
-
-export default prisma;
