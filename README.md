@@ -108,6 +108,37 @@ npm test
 
 - `GET /api/health` - Health check
 
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login a user
+- `GET /api/auth/me` - Get current user (requires authentication)
+
+### Playlists
+- `POST /api/playlists` - Create a new playlist (requires authentication)
+- `GET /api/playlists` - Get all playlists for authenticated user (requires authentication)
+- `GET /api/playlists/:id` - Get a specific playlist by ID (requires authentication)
+- `PUT /api/playlists/:id` - Update a playlist (requires authentication)
+- `DELETE /api/playlists/:id` - Delete a playlist (requires authentication)
+
+#### Playlist Object Structure
+```json
+{
+  "id": 1,
+  "name": "Beginner French",
+  "description": "A playlist for French beginners",
+  "level": "beginner",
+  "lessonCount": 0,
+  "userId": 1,
+  "createdAt": "2025-08-01T14:00:00.000Z",
+  "updatedAt": "2025-08-01T14:00:00.000Z"
+}
+```
+
+#### Valid Levels
+- `beginner`
+- `intermediate`
+- `advanced`
+
 ## Logging
 
 The application uses Winston for logging. Logs are stored in the `logs` directory:

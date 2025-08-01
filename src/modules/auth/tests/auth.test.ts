@@ -3,7 +3,6 @@ import app from '../../../app';
 import prisma from '../../../utils/db';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import config from '../../../config';
 
 // Mock Prisma client
 jest.mock('../../../utils/db', () => ({
@@ -36,7 +35,7 @@ describe('Auth Controller', () => {
     it('should register a new user', async () => {
       // Mock Prisma findUnique to return null (user doesn't exist)
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      
+
       // Mock Prisma create to return a new user
       (prisma.user.create as jest.Mock).mockResolvedValue({
         id: 1,
@@ -47,32 +46,32 @@ describe('Auth Controller', () => {
         isPaid: false,
       });
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'test@example.com',
-          password: 'password123',
-          language: 'en',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'test@example.com',
+        password: 'password123',
+        language: 'en',
+      });
 
       expect(response.status).toBe(201);
       expect(response.body.status).toBe('success');
       expect(response.body.data.user).toHaveProperty('id');
       expect(response.body.data.user).toHaveProperty('email', 'test@example.com');
       expect(response.body.data.user).not.toHaveProperty('passwordHash');
-      
+
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });
-      
+
       expect(bcrypt.hash).toHaveBeenCalled();
-      
-      expect(prisma.user.create).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({
-          email: 'test@example.com',
-          language: 'en',
-        }),
-      }));
+
+      expect(prisma.user.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            email: 'test@example.com',
+            language: 'en',
+          }),
+        })
+      );
     });
 
     it('should return 400 if user already exists', async () => {
@@ -86,22 +85,20 @@ describe('Auth Controller', () => {
         isPaid: false,
       });
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'test@example.com',
-          password: 'password123',
-          language: 'en',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'test@example.com',
+        password: 'password123',
+        language: 'en',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body.status).toBe('error');
       expect(response.body.message).toBe('User with this email already exists');
-      
+
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });
-      
+
       expect(prisma.user.create).not.toHaveBeenCalled();
     });
   });
@@ -117,21 +114,19 @@ describe('Auth Controller', () => {
       // Mock Prisma findUnique to return null (user doesn't exist)
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'password123',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'password123',
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.status).toBe('error');
       expect(response.body.message).toBe('Invalid credentials');
-      
+
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });
-      
+
       expect(bcrypt.compare).not.toHaveBeenCalled();
       expect(jwt.sign).not.toHaveBeenCalled();
     });
@@ -146,25 +141,23 @@ describe('Auth Controller', () => {
         coins: 0,
         isPaid: false,
       });
-      
+
       // Mock bcrypt compare to return false (password is invalid)
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'wrongpassword',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'wrongpassword',
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.status).toBe('error');
       expect(response.body.message).toBe('Invalid credentials');
-      
+
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });
-      
+
       expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', 'hashedPassword');
       expect(jwt.sign).not.toHaveBeenCalled();
     });

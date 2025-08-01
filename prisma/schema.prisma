@@ -20,10 +20,25 @@ model User {
   progress        LessonProgress[]
   purchases       Purchase[]
   coinTransactions CoinTransaction[]
+  playlists       Playlist[]
 
   @@map("users")
 }
 
+model Playlist {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  level       String   // e.g., "beginner", "intermediate", "advanced"
+  lessonCount Int      @default(0) @map("lesson_count")
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("playlists")
+}
 
 model LessonProgress {
   id        Int      @id @default(autoincrement())
