@@ -21,7 +21,7 @@ export const registerUser = async (
   email: string,
   password: string,
   language: string = 'en'
-): Promise<Omit<User, 'passwordHash'>> => {
+): Promise<{ user: Omit<User, 'passwordHash'>; token: string }> => {
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -44,9 +44,13 @@ export const registerUser = async (
     },
   });
 
-  // Return user without password
+  // Generate JWT token
+  const token = jwt.sign({ id: user.id, email: user.email }, config.jwtSecret as string);
+
+  // Return user without password and token
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash: _, ...userWithoutPassword } = user;
-  return userWithoutPassword;
+  return { user: userWithoutPassword, token };
 };
 
 /**
@@ -73,12 +77,10 @@ export const loginUser = async (
   }
 
   // Generate JWT token
-  const token = jwt.sign(
-    { id: user.id, email: user.email },
-    config.jwtSecret as string
-  );
+  const token = jwt.sign({ id: user.id, email: user.email }, config.jwtSecret as string);
 
   // Return user without password and token
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash: _, ...userWithoutPassword } = user;
   return { user: userWithoutPassword, token };
 };
@@ -86,9 +88,7 @@ export const loginUser = async (
 /**
  * Get user by ID
  */
-export const getUserById = async (
-  id: number
-): Promise<Omit<User, 'passwordHash'>> => {
+export const getUserById = async (id: number): Promise<Omit<User, 'passwordHash'>> => {
   const user = await prisma.user.findUnique({
     where: { id },
   });
@@ -98,6 +98,7 @@ export const getUserById = async (
   }
 
   // Return user without password
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };
