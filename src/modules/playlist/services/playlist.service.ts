@@ -66,11 +66,10 @@ export const getUserPlaylists = async (userId: number): Promise<Playlist[]> => {
 /**
  * Get a playlist by ID
  */
-export const getPlaylistById = async (id: number, userId: number): Promise<Playlist> => {
+export const getPlaylistById = async (id: number): Promise<Playlist> => {
   const playlist = await prisma.playlist.findFirst({
     where: {
       id,
-      userId, // Ensure user can only access their own playlists
     },
   });
 

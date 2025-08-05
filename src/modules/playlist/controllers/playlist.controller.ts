@@ -87,7 +87,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
     }
 
     // Get playlist
-    const playlist = await getPlaylistById(playlistId, userId);
+    const playlist = await getPlaylistById(playlistId);
 
     return res.status(200).json({
       status: 'success',
