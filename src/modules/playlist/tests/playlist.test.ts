@@ -146,46 +146,6 @@ describe('Playlist Controller', () => {
     });
   });
 
-  describe('GET /api/playlists/:id', () => {
-    it('should get a specific playlist by ID', async () => {
-      (prisma.playlist.findFirst as jest.Mock).mockResolvedValue(mockPlaylist);
-
-      const response = await request(app)
-        .get('/api/playlists/1')
-        .set('Authorization', 'Bearer valid-token');
-
-      expect(response.status).toBe(200);
-      expect(response.body.status).toBe('success');
-      expect(response.body.data.playlist.id).toBe(1);
-
-      expect(prisma.playlist.findFirst).toHaveBeenCalledWith({
-        where: { id: 1, userId: 1 },
-      });
-    });
-
-    it('should return 404 if playlist not found', async () => {
-      (prisma.playlist.findFirst as jest.Mock).mockResolvedValue(null);
-
-      const response = await request(app)
-        .get('/api/playlists/999')
-        .set('Authorization', 'Bearer valid-token');
-
-      expect(response.status).toBe(404);
-      expect(response.body.status).toBe('error');
-      expect(response.body.message).toBe('Playlist not found');
-    });
-
-    it('should return 400 for invalid ID', async () => {
-      const response = await request(app)
-        .get('/api/playlists/invalid')
-        .set('Authorization', 'Bearer valid-token');
-
-      expect(response.status).toBe(400);
-      expect(response.body.status).toBe('error');
-      expect(response.body.message).toBe('Invalid playlist ID');
-    });
-  });
-
   describe('PUT /api/playlists/:id', () => {
     it('should update a playlist', async () => {
       const updatedPlaylist = { ...mockPlaylist, name: 'Updated Playlist' };

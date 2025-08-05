@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { create, getAll, getById, remove, update } from '../controllers/playlist.controller';
+import { create, getAll, remove, update } from '../controllers/playlist.controller';
 import { authenticate } from '../../auth/middlewares/auth.middleware';
 
 const router = Router();
@@ -17,13 +17,6 @@ router.post('/', authenticate, create);
  * @access  Private
  */
 router.get('/', authenticate, getAll);
-
-/**
- * @route   GET /api/playlists/:id
- * @desc    Get a specific playlist by ID
- * @access  Private
- */
-router.get('/:id', authenticate, getById);
 
 /**
  * @route   PUT /api/playlists/:id
