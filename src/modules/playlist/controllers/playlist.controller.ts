@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import {
   createPlaylist,
   deletePlaylist,
-  getPlaylistById,
   getUserPlaylists,
   updatePlaylist,
 } from '../services/playlist.service';
@@ -54,45 +53,13 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
     }
 
     // Get user playlists
-    const playlists = await getUserPlaylists(userId);
+    const playlists = await getUserPlaylists();
 
     return res.status(200).json({
       status: 'success',
       data: {
         playlists,
         count: playlists.length,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Get a specific playlist by ID
- */
-export const getById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user?.id;
-
-    if (!userId) {
-      throw new ApiError(401, 'Not authenticated');
-    }
-
-    // Validate ID
-    const playlistId = parseInt(id, 10);
-    if (isNaN(playlistId)) {
-      throw new ApiError(400, 'Invalid playlist ID');
-    }
-
-    // Get playlist
-    const playlist = await getPlaylistById(playlistId);
-
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        playlist,
       },
     });
   } catch (error) {

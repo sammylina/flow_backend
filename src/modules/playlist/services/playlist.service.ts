@@ -54,34 +54,15 @@ export const createPlaylist = async (
 /**
  * Get all playlists for a user
  */
-export const getUserPlaylists = async (userId: number): Promise<Playlist[]> => {
+export const getUserPlaylists = async (): Promise<Playlist[]> => {
   const playlists = await prisma.playlist.findMany({
-    where: { userId },
     orderBy: { createdAt: 'desc' },
   });
 
   return playlists;
 };
 
-/**
- * Get a playlist by ID
- */
-export const getPlaylistById = async (id: number): Promise<Playlist> => {
-  const playlist = await prisma.playlist.findFirst({
-    where: {
-      id,
-    },
-  });
-
-  if (!playlist) {
-    throw new ApiError(404, 'Playlist not found');
-  }
-
-  return playlist;
-};
-
-/**
- * Update a playlist
+/** * Update a playlist
  */
 export const updatePlaylist = async (
   id: number,
