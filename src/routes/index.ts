@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authRoutes, playlistRoutes } from '../modules';
+import { authRoutes, playlistRoutes, lessonRoutes } from '../modules';
 
 const router = Router();
 
@@ -14,5 +14,6 @@ router.get('/health', (req, res) => {
 // API routes
 router.use('/auth', authRoutes);
 router.use('/playlists', playlistRoutes);
+router.use('/lessons', lessonRoutes);
 
 export default router;
