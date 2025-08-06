@@ -10,8 +10,5 @@ const router = Router();
  * @access  Private
  */
 router.post('/', authenticate, create);
-//router.get('/lessons', fetchLessons) // By default it fetches lessons by playlist id
-//router.get('/lessons:id', fetchLessonById)
-//router.get('/lessons:id/studyItems', fetchLessonStudyItems)
 
 export default router;

@@ -20,8 +20,8 @@ type CreateLessonData = {
 export const createLesson = async (data: CreateLessonData): Promise<Lesson> => {
   // Check if playlist exists
   const playlistCount = await prisma.playlist.count({ where: { id: data.playlistId } });
-  if (playlistCount !== 1) {
-    throw new ApiError(400, 'Playlist not found');
+  if (playlistCount < 1) {
+    throw new ApiError(400, `Playlist does not exist with ID: ${data.playlistId}`);
   }
 
   // Create lesson
