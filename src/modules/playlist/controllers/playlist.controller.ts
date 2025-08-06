@@ -48,11 +48,6 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 export const getById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
-
-    if (!userId) {
-      throw new ApiError(401, 'Not authenticated');
-    }
 
     // Validate ID
     const playlistId = parseInt(id, 10);
@@ -67,15 +62,10 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
       throw new ApiError(404, 'Playlist not found');
     }
 
-    // Ensure the playlist belongs to the authenticated user
-    if (playlist.userId !== userId) {
-      throw new ApiError(403, 'Forbidden');
-    }
-
     return res.status(200).json({
       status: 'success',
       data: {
-        playlist,
+        playlist, // This includes the lessons
       },
     });
   } catch (error) {

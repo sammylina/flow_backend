@@ -132,7 +132,6 @@ describe('Playlist Controller', () => {
       expect(response.body.data.count).toBe(1);
 
       expect(prisma.playlist.findMany).toHaveBeenCalledWith({
-        where: { userId: 1 },
         orderBy: { createdAt: 'desc' },
       });
     });

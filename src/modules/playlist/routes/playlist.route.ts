@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { create, getAll, remove, update } from '../controllers/playlist.controller';
+import { create, getAll, getById, remove, update } from '../controllers/playlist.controller';
 import { authenticate } from '../../auth/middlewares/auth.middleware';
 
 const router = Router();
@@ -13,10 +13,17 @@ router.post('/', authenticate, create);
 
 /**
  * @route   GET /api/playlists
- * @desc    Get all playlists for authenticated user
+ * @desc    Get all playlists
  * @access  Private
  */
 router.get('/', authenticate, getAll);
+
+/**
+ * @router  GET /api/playlist/:id
+ * @desc    Get all lesson in a playlist
+ * @access  Private
+ */
+router.get('/:id', authenticate, getById);
 
 /**
  * @route   PUT /api/playlists/:id
