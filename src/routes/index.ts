@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authRoutes, playlistRoutes, lessonRoutes } from '../modules';
+import { authRoutes, lessonRoutes, playlistRoutes } from '../modules';
 
 const router = Router();
 

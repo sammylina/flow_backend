@@ -1,5 +1,5 @@
 import { authRoutes, authenticate } from './auth';
 import { playlistRoutes } from './playlist';
-import { lessonRoutes } from './lesson/lesson.routes';
+import { lessonRoutes } from './lesson';
 
 export { authRoutes, authenticate, playlistRoutes, lessonRoutes };
