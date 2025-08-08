@@ -8,12 +8,15 @@ import logger from '../../../utils/logger';
  */
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, audioUrl, playlistId } = req.body;
+    const { title, audioUrl } = req.body;
+    let playlistId = req.body.playlistId;
     const userId = req.user?.id;
 
     if (!userId) {
       throw new ApiError(401, 'Not authenticated');
     }
+
+    playlistId = parseInt(playlistId, 10);
 
     if (!title || !audioUrl || !playlistId) {
       throw new ApiError(400, 'title, audioUrl and playlistId are required');
