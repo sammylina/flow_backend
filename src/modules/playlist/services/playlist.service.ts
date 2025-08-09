@@ -62,6 +62,22 @@ export const getUserPlaylists = async (): Promise<Playlist[]> => {
   return playlists;
 };
 
+/**
+ * Get a single playlist by ID
+ */
+export const getPlaylistById = async (id: number): Promise<Playlist | null> => {
+  const playlist = await prisma.playlist.findUnique({
+    where: { id },
+    include: {
+      lessons: {
+        orderBy: { order: 'asc' },
+      },
+    },
+  });
+
+  return playlist;
+};
+
 /** * Update a playlist
  */
 export const updatePlaylist = async (

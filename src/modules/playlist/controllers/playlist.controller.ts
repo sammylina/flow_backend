@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
   createPlaylist,
   deletePlaylist,
+  getPlaylistById,
   getUserPlaylists,
   updatePlaylist,
 } from '../services/playlist.service';
@@ -34,6 +35,37 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
       status: 'success',
       data: {
         playlist,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get a single playlist by ID
+ */
+export const getById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    const playlistId = parseInt(id, 10);
+    if (isNaN(playlistId)) {
+      throw new ApiError(400, 'Invalid playlist ID');
+    }
+
+    // Get playlist
+    const playlist = await getPlaylistById(playlistId);
+
+    if (!playlist) {
+      throw new ApiError(404, 'Playlist not found');
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        playlist, // This includes the lessons
       },
     });
   } catch (error) {
