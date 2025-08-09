@@ -50,6 +50,7 @@ model Lesson {
   order       Int      @default(0)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+  progress    LessonProgress[]
 
   @@map("lessons")
 }
@@ -57,13 +58,16 @@ model Lesson {
 model LessonProgress {
   id        Int      @id @default(autoincrement())
   userId    Int
-  lessonId  String
+  lessonId  Int 
   completed Boolean  @default(false)
+  flowCompleted Boolean  @default(false)
+  studyCompleted Boolean  @default(false)
   score     Int?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id])
 
   @@unique([userId, lessonId])
   @@map("lesson_progress")
