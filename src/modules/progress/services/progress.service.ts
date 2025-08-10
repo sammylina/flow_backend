@@ -13,69 +13,55 @@ type LessonProgress = {
   updatedAt: Date;
 };
 
-/**
- * Get progress for a specific user
- */
-export const getUserProgress = async (userId: number): Promise<LessonProgress[]> => {
-  return await prisma.lessonProgress.findMany({
+export const getUserProgress = async (
+  userId: number
+): Promise<Record<number, Partial<LessonProgress>>> => {
+  const dbResults = await prisma.lessonProgress.findMany({
     where: { userId },
-    include: {
-      lesson: {
-        select: { id: true, title: true, order: true, playlistId: true },
-      },
-    },
-    orderBy: {
-      lessonId: 'asc',
+    orderBy: { lessonId: 'asc' },
+    select: {
+      lessonId: true,
+      flowCompleted: true,
+      studyCompleted: true,
     },
   });
+
+  const progress: Record<number, Partial<LessonProgress>> = {};
+  for (const row of dbResults) {
+    progress[row.lessonId] = {
+      flowCompleted: row.flowCompleted,
+      studyCompleted: row.studyCompleted,
+    };
+  }
+
+  return progress;
 };
 
-/**
- * Update user progress for a given lesson and progress type
- * Rules:
- *  - studyCompleted cannot be true unless flowCompleted is already true
- *  - flowCompleted and studyCompleted default to false
- */
 export const updateUserProgress = async (
   userId: number,
   lessonId: number,
   mode: 'flow' | 'study',
   completed: boolean,
   score?: number
-): Promise<LessonProgress> => {
-  if (!['flow', 'study'].includes(mode)) {
-    throw new ApiError(400, 'Invalid progress mode');
+): Promise<Record<number, Partial<LessonProgress>>> => {
+  let existing;
+  if (mode === 'study') {
+    existing = await prisma.lessonProgress.findUnique({
+      where: { userId_lessonId: { userId, lessonId } },
+    });
+    if (completed && !existing?.flowCompleted) {
+      throw new ApiError(400, 'Cannot complete study before completing flow');
+    }
   }
 
-  // Ensure lesson exists
-  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
-  if (!lesson) {
-    throw new ApiError(404, 'Lesson not found');
-  }
-
-  // Fetch existing progress if any
-  const existing = await prisma.lessonProgress.findUnique({
-    where: { userId_lessonId: { userId, lessonId } },
-  });
-
-  // Validation: study cannot be completed unless flow is already completed
-  if (mode === 'study' && completed && !existing?.flowCompleted) {
-    throw new ApiError(400, 'Cannot complete study before completing flow');
-  }
-
-  // Build updated fields
   const updateData: Partial<LessonProgress> = {};
+
   if (mode === 'flow') {
     updateData.flowCompleted = completed;
-    if (!completed) {
-      // Reset studyCompleted if flow is undone
-      updateData.studyCompleted = false;
-    }
   } else if (mode === 'study') {
     updateData.studyCompleted = completed;
   }
 
-  // completed = true only if both are completed
   const finalFlow = mode === 'flow' ? completed : (existing?.flowCompleted ?? false);
   const finalStudy = mode === 'study' ? completed : (existing?.studyCompleted ?? false);
   updateData.completed = finalFlow && finalStudy;
@@ -84,8 +70,7 @@ export const updateUserProgress = async (
     updateData.score = score;
   }
 
-  // Upsert progress record
-  return await prisma.lessonProgress.upsert({
+  await prisma.lessonProgress.upsert({
     where: { userId_lessonId: { userId, lessonId } },
     update: updateData,
     create: {
@@ -93,11 +78,11 @@ export const updateUserProgress = async (
       lessonId,
       flowCompleted: mode === 'flow' ? completed : false,
       studyCompleted: mode === 'study' ? completed : false,
-      completed:
-        mode === 'study'
-          ? false // can't complete until flow is true
-          : completed && mode === 'flow' && false, // both must be true
+      completed: finalFlow && finalStudy,
       score,
     },
   });
+
+  // Return the updated map for the user
+  return await getUserProgress(userId);
 };

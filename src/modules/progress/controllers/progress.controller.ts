@@ -18,7 +18,7 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({
       status: 'success',
-      data: { progress },
+      data: { progress, userId },
     });
   } catch (error) {
     next(error);
@@ -44,13 +44,13 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
       throw new ApiError(400, `Invalid lesson ID`);
     }
 
-    const updatedProgress = await updateUserProgress(userId, lessonId, mode, completed, score);
+    const progress = await updateUserProgress(userId, lessonId, mode, completed, score);
 
     logger.info(`Progress updated: user ${userId}, lesson ${lessonId}, mode ${mode}`);
 
     return res.status(200).json({
       status: 'success',
-      data: { progress: updatedProgress },
+      data: { progress, userId },
     });
   } catch (error) {
     next(error);
