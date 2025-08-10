@@ -140,7 +140,7 @@ describe('POST /api/lessons - additional scenarios', () => {
   });
 
   it('should return 400 when title is missing', async () => {
-    const { ...rest } = validPayload;
+    const { title: _unused, ...rest } = validPayload;
     const res = await request(app)
       .post('/api/lessons')
       .set('Authorization', 'Bearer valid-token')
@@ -153,7 +153,7 @@ describe('POST /api/lessons - additional scenarios', () => {
   });
 
   it('should return 400 when audioUrl is missing', async () => {
-    const { ...rest } = validPayload;
+    const { audioUrl: _unused, ...rest } = validPayload;
     const res = await request(app)
       .post('/api/lessons')
       .set('Authorization', 'Bearer valid-token')
@@ -165,7 +165,7 @@ describe('POST /api/lessons - additional scenarios', () => {
   });
 
   it('should return 400 when playlistId is missing', async () => {
-    const { ...rest } = validPayload;
+    const { playlistId: _unused, ...rest } = validPayload;
     const res = await request(app)
       .post('/api/lessons')
       .set('Authorization', 'Bearer valid-token')
