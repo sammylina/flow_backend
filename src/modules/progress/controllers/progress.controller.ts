@@ -36,7 +36,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     if (!userId) {
       throw new ApiError(401, 'Not authenticated');
     }
-    const { type, completed, score } = req.body;
+    const { mode, completed, score } = req.body;
 
     const lessonId = parseInt(id, 10);
 
@@ -44,9 +44,9 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
       throw new ApiError(400, `Invalid lesson ID`);
     }
 
-    const updatedProgress = await updateUserProgress(userId, lessonId, type, completed, score);
+    const updatedProgress = await updateUserProgress(userId, lessonId, mode, completed, score);
 
-    logger.info(`Progress updated: user ${userId}, lesson ${lessonId}, type ${type}`);
+    logger.info(`Progress updated: user ${userId}, lesson ${lessonId}, mode ${mode}`);
 
     return res.status(200).json({
       status: 'success',

@@ -39,12 +39,12 @@ export const getUserProgress = async (userId: number): Promise<LessonProgress[]>
 export const updateUserProgress = async (
   userId: number,
   lessonId: number,
-  type: 'flow' | 'study',
+  mode: 'flow' | 'study',
   completed: boolean,
   score?: number
 ): Promise<LessonProgress> => {
-  if (!['flow', 'study'].includes(type)) {
-    throw new ApiError(400, 'Invalid progress type');
+  if (!['flow', 'study'].includes(mode)) {
+    throw new ApiError(400, 'Invalid progress mode');
   }
 
   // Ensure lesson exists
@@ -59,25 +59,25 @@ export const updateUserProgress = async (
   });
 
   // Validation: study cannot be completed unless flow is already completed
-  if (type === 'study' && completed && !existing?.flowCompleted) {
+  if (mode === 'study' && completed && !existing?.flowCompleted) {
     throw new ApiError(400, 'Cannot complete study before completing flow');
   }
 
   // Build updated fields
   const updateData: Partial<LessonProgress> = {};
-  if (type === 'flow') {
+  if (mode === 'flow') {
     updateData.flowCompleted = completed;
     if (!completed) {
       // Reset studyCompleted if flow is undone
       updateData.studyCompleted = false;
     }
-  } else if (type === 'study') {
+  } else if (mode === 'study') {
     updateData.studyCompleted = completed;
   }
 
   // completed = true only if both are completed
-  const finalFlow = type === 'flow' ? completed : (existing?.flowCompleted ?? false);
-  const finalStudy = type === 'study' ? completed : (existing?.studyCompleted ?? false);
+  const finalFlow = mode === 'flow' ? completed : (existing?.flowCompleted ?? false);
+  const finalStudy = mode === 'study' ? completed : (existing?.studyCompleted ?? false);
   updateData.completed = finalFlow && finalStudy;
 
   if (score !== undefined) {
@@ -91,12 +91,12 @@ export const updateUserProgress = async (
     create: {
       userId,
       lessonId,
-      flowCompleted: type === 'flow' ? completed : false,
-      studyCompleted: type === 'study' ? completed : false,
+      flowCompleted: mode === 'flow' ? completed : false,
+      studyCompleted: mode === 'study' ? completed : false,
       completed:
-        type === 'study'
+        mode === 'study'
           ? false // can't complete until flow is true
-          : completed && type === 'flow' && false, // both must be true
+          : completed && mode === 'flow' && false, // both must be true
       score,
     },
   });
