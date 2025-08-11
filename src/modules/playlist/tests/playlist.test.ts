@@ -132,6 +132,13 @@ describe('Playlist Controller', () => {
       expect(response.body.data.count).toBe(1);
 
       expect(prisma.playlist.findMany).toHaveBeenCalledWith({
+        include: {
+          lessons: {
+            select: {
+              id: true,
+            },
+          },
+        },
         orderBy: { createdAt: 'desc' },
       });
     });

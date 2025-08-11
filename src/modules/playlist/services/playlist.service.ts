@@ -56,6 +56,9 @@ export const createPlaylist = async (
  */
 export const getUserPlaylists = async (): Promise<Playlist[]> => {
   const playlists = await prisma.playlist.findMany({
+    include: {
+      lessons: { select: { id: true } },
+    },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -70,7 +73,7 @@ export const getPlaylistById = async (id: number): Promise<Playlist | null> => {
     where: { id },
     include: {
       lessons: {
-        orderBy: { order: 'asc' },
+        orderBy: { id: 'asc' },
       },
     },
   });
