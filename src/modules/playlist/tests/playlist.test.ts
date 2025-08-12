@@ -139,7 +139,7 @@ describe('Playlist Controller', () => {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: 'asc' },
       });
     });
 

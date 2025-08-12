@@ -59,7 +59,7 @@ export const getUserPlaylists = async (): Promise<Playlist[]> => {
     include: {
       lessons: { select: { id: true } },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: 'asc' },
   });
 
   return playlists;
