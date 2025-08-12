@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  email           String    @unique
-  passwordHash    String
-  language        String    // e.g., "fr", "es", "en"
-  coins           Int       @default(0)
-  isPaid          Boolean   @default(false)
-  progress        LessonProgress[]
-  purchases       Purchase[]
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  passwordHash     String
+  language         String
+  coins            Int               @default(0)
+  isPaid           Boolean           @default(false)
   coinTransactions CoinTransaction[]
-  playlists       Playlist[]
+  progress         LessonProgress[]
+  playlists        Playlist[]
+  purchases        Purchase[]
 
   @@map("users")
 }
@@ -29,45 +26,44 @@ model Playlist {
   id          Int      @id @default(autoincrement())
   name        String
   description String?
-  level       String   // e.g., "beginner", "intermediate", "advanced"
+  level       String
   lessonCount Int      @default(0) @map("lesson_count")
   userId      Int      @map("user_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   lessons     Lesson[]
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("playlists")
 }
 
 model Lesson {
-  id          Int      @id @default(autoincrement())
-  title       String
-  audioUrl    String
-  playlistId  Int      @map("playlist_id")
-  playlist    Playlist @relation(fields: [playlistId], references: [id])
-  order       Int      @default(0)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  progress    LessonProgress[]
+  id         Int              @id @default(autoincrement())
+  title      String
+  audioUrl   String
+  playlistId Int              @map("playlist_id")
+  order      Int              @default(0)
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+  progress   LessonProgress[]
+  playlist   Playlist         @relation(fields: [playlistId], references: [id])
+  StudyItem  StudyItem[]
 
   @@map("lessons")
 }
 
 model LessonProgress {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  lessonId  Int 
-  completed Boolean  @default(false)
-  flowCompleted Boolean  @default(false)
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  completed      Boolean  @default(false)
+  score          Int?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  flowCompleted  Boolean  @default(false)
   studyCompleted Boolean  @default(false)
-  score     Int?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id])
+  lessonId       Int
+  lesson         Lesson   @relation(fields: [lessonId], references: [id])
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
   @@map("lesson_progress")
@@ -76,15 +72,14 @@ model LessonProgress {
 model Purchase {
   id        Int      @id @default(autoincrement())
   userId    Int
-  itemType  String   // e.g., "premium", "coins", "course"
+  itemType  String
   itemId    String?
   amount    Decimal
   currency  String   @default("USD")
-  status    String   @default("pending") // pending, completed, failed
+  status    String   @default("pending")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("purchases")
 }
@@ -92,12 +87,29 @@ model Purchase {
 model CoinTransaction {
   id          Int      @id @default(autoincrement())
   userId      Int
-  amount      Int      // positive for earning, negative for spending
-  type        String   // e.g., "earned", "spent", "purchased", "bonus"
+  amount      Int
+  type        String
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("coin_transactions")
+}
+
+model StudyItem {
+  id         Int           @id @default(autoincrement())
+  lessonId   Int    @map("lesson_id")
+  type       StudyItemType
+  prompt     String
+  targetText String
+  audioUrl   String
+  lessons    Lesson @relation(fields: [lessonId], references: [id])
+
+  @@index([lessonId])
+  @@map("study_items")
+}
+
+enum StudyItemType {
+  pronounciation
+  writing
 }
