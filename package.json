@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npx prisma migrate deploy && npx prisma generate && node dist/index.js",
+    "start": "npx prisma migrate deploy && npx prisma generate && npx prisma db seed && node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "test": "jest --detectOpenHandles",
