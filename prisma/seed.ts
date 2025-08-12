@@ -34,13 +34,13 @@ async function main() {
       create: [
         {
           type: StudyItemType.pronounciation,
-          prompt: `${title}`,
+          prompt: `Read it aloud!!`,
           targetText: 'Bonjour',
           audioUrl: 'http://languageinstall.myddns.me/audio/lines/lesson_6/008_en_9172e8eec99f.wav'
         },
         {
           type: StudyItemType.pronounciation,
-          prompt: `${title}`,
+          prompt: `Read it aloud!!`,
           targetText: 'Vous',
           audioUrl: 'http://languageinstall.myddns.me/audio/lines/lesson_6/015_en_aa2f27e353bb.wav',
         },
